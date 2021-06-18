@@ -10,8 +10,9 @@ const initialState = {
         return { token : payload };
   
     }};
-  
-    
+    export default token;
+
+
   export const setToken = (token) => {
     return { type: "SET_TOKEN" ,
      payload : token }
