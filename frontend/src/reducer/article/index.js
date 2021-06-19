@@ -14,7 +14,7 @@ const initialState = {
       case 'UPDATE_ARTICLE':
         return {
             articles: state.articles.map((elem, i) => {
-            if (elem._id === payload._id) {
+            if (elem._id === payload) {
               return payload;
             }
             return elem;
