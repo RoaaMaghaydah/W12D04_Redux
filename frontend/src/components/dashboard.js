@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { setArticles, updateArticles } from './../reducer/article/index';
+import { setArticles, updateArticles,deleteArticles } from './../reducer/article/index';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -32,7 +32,7 @@ const Dashboard = () => {
 	const updateArtical = (id) => {
 		const newA = { title, description };
 		axios.put(`http://localhost:5000/articles/${id}`, newA)
-			.then((result) => {		
+			.then((result) => {
 				dispatch(updateArticles(result.data[0].id));
 			})
 			.catch((err) => {
@@ -40,24 +40,37 @@ const Dashboard = () => {
 			});
 	}
 
+	const deleteArtical = (id) => {
+		axios.delete(`http://localhost:5000/articles/${id}`)
+			.then((result) => {
+				console.log(result)
+				dispatch(deleteArticles(id));
+				console.log("delete",state.articals)
+			})
+			.catch((err) => {
+				console.log("error", err);
+			});
+	}
+
 	return (
 		<>
 			{state.articals && state.articals.map((elem, i) => <><div className="addArt" key={i}>
-				<p>-----------------------------------------------------------</p>
+				<p>-----------------------------------------------------------------------------------------------------</p>
 				title:<p className="addArt1"> {elem.title}</p>
 				description: <p className="addArt2">{elem.description}</p>
 
-
 				<p>_______update_____________</p>
-				<input className="newArticleInput" type="text" placeholder="Title here" onChange={(e) => {
+				<input className="newArticleInput" type="text" placeholder="Title update" onChange={(e) => {
 					setTitle(e.target.value);
 				}} />
-				<input className="newArticleInput_1" type="text" placeholder="description" onChange={(e) => {
+				<input className="newArticleInput_1" type="text" placeholder="description update" onChange={(e) => {
 					setDescription(e.target.value);
 				}} />
 				<button onClick={() => { updateArtical(elem.id) }}>update</button>
 
-				<p>_______update_____________</p>
+				<p>_______delete_____________</p>
+				<button onClick={() => {deleteArtical(elem.id) }}>Delete</button>
+
 
 
 			</div>

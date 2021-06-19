@@ -22,7 +22,7 @@ const initialState = {
         };
   
       case 'DELETE_ARTICLE':
-        return state.articles  .filter((elem) => elem._id !== payload._id);
+        return state.articles .filter((elem) => { return elem._id !== payload});
   
       default:
         return state;
