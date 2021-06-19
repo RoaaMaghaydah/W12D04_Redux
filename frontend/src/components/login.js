@@ -25,7 +25,7 @@ const Login = () => {
 			.then((response) => {
 				//setToken(response.data.token);
 				//response.json(response)
-				console.log("res :  ",response.data)
+				console.log("res :  ", response.data)
 				dispatch(setToken(response.data));
 				history.push("/deshboard")
 			})
@@ -48,7 +48,6 @@ const Login = () => {
 				onChange={(e) => setPassword(e.target.value)}
 			/>
 			<button onClick={cheakLogin}>Login</button>
-
 
 
 			{/* {loginContext.message && <div>{loginContext.message}</div>} */}

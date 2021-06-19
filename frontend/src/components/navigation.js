@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { LoginContext } from './../context/login';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const Navigation = () => {
 	const loginContext = useContext(LoginContext);
@@ -11,9 +13,16 @@ const Navigation = () => {
 		loginContext.logout();
 	};
 
+	const state = useSelector((state) => {
+		return {
+			token: state.login.token
+		};
+	});
+
+
 	return (
 		<>
-			{localStorage.getItem('token') ? (
+			{state.token ? (
 				<>
 					<Link to="/dashboard">Dashboard</Link>
 					&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
