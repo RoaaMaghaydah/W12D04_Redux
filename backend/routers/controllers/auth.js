@@ -1,21 +1,78 @@
-const usersModel = require('./../../db/models/users');
+const db = require('./../../db/db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const login = (req, res) => {
+// const authenticateBasic =async(email, password) => {
+// 	 const query = `SELECT * FROM users WHERE email=?`
+// 	const data = [email];
+// 	let finalR=[];
+//  	 db.query(query, data, async (err, results) => {
+// 		if (err) {
+// 			console.log(err)
+// 			console.log("no email")
+// 		}
+// 		console.log("r", results[0].password)
+// 		if (results[0]) {
+// 			const valid = await bcrypt.compare(password, results[0].password);
+// 			if (valid) {
+// 				const payload = {
+// 					firstName: results[0].firstName,
+// 					lastName: results[0].lastName,
+// 					role: results[0].id,
+// 				};
+
+// 				console.log("paylod", payload, process.env.SECRET)
+// 				const options = {
+// 					expiresIn: '60m',
+// 				};
+// 				console.log("paylod", payload, process.env.SECRET, options)
+
+// 				finalR.push([jwt.sign(payload, process.env.SECRET, options), 200]);
+// 			}
+// 		}
+// 		        finalR = ['The password you’ve entered is incorrect', 403];
+
+// 		})
+//          	return finalR[0]
+
+// };
+
+
+const login = async (req, res) => {
 	const { email, password } = req.body;
+	console.log("email", email, "password", password)
+	// 
+	const query = `SELECT * FROM users WHERE email=?`
+	const data = [email];
+	db.query(query, data, async (err, results) => {
+		if (err) {
+			console.log(err)
+			console.log("no email")
+		}
+		console.log("r", results[0].password)
+		if (results[0]) {
+			const valid = await bcrypt.compare(password, results[0].password);
+			if (valid) {
+				const payload = {
+					firstName: results[0].firstName,
+					lastName: results[0].lastName,
+					role: results[0].id,
+				};
 
-	usersModel
-		.authenticateBasic(email, password)
-		.then((result) => {
-			if (result[1] === 200)
-				return res.status(result[1]).json({ token: result[0] });
+				console.log("paylod", payload, process.env.SECRET)
+				const options = {
+					expiresIn: '60m',
+				};
+				console.log("paylod", payload, process.env.SECRET, options)
+				const arr1= [jwt.sign(payload, process.env.SECRET, options), 200];
+				res.json(arr1[0]);
+			}
+		}
+		res.json(['The password you’ve entered is incorrect', 403]);
+        
+	})
 
-			res.status(result[1]).json(result[0]);
-		})
-		.catch((err) => {
-			res.send(err);
-		});
 };
-
 module.exports = {
 	login,
 };

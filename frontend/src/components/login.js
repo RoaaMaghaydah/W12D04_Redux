@@ -1,43 +1,57 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { LoginContext } from './../context/login';
+import { setToken } from './../reducer/login/index';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+
 
 const Login = () => {
-	const loginContext = useContext(LoginContext);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 	const history = useHistory();
+	const dispatch = useDispatch();
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		loginContext.login();
-		if (loginContext.loggedIn) {
-			history.push('/dashboard');
-		}
-	};
+	const state = useSelector((state) => {
+		return {
+			token: state.login.token
+		};
+	});
 
-	const redirect = () => {
-		if (loginContext.loggedIn) {
-			history.push('/dashboard');
-		}
-	};
+	const cheakLogin = () => {
+		const login = { email, password };
+		//console.log(login);
+		axios.post(`http://localhost:5000/login`, login)
+			.then((response) => {
+				//setToken(response.data.token);
+				//response.json(response)
+				console.log("res :  ",response.data)
+				dispatch(setToken(response.data));
+				history.push("/deshboard")
+			})
+			.catch((err) => {
+				console.log(err)
+				console.log("error")
+			})
+	}
 
 	return (
 		<>
-			<form onSubmit={handleSubmit}>
-				<input
-					type="email"
-					placeholder="email here"
-					onChange={(e) => loginContext.setEmail(e.target.value)}
-				/>
-				<input
-					type="password"
-					placeholder="password here"
-					onChange={(e) => loginContext.setPassword(e.target.value)}
-				/>
-				<button>Login</button>
-			</form>
+			<input
+				type="email"
+				placeholder="email here"
+				onChange={(e) => setEmail(e.target.value)}
+			/>
+			<input
+				type="password"
+				placeholder="password here"
+				onChange={(e) => setPassword(e.target.value)}
+			/>
+			<button onClick={cheakLogin}>Login</button>
 
-			{redirect()}
-			{loginContext.message && <div>{loginContext.message}</div>}
+
+
+			{/* {loginContext.message && <div>{loginContext.message}</div>} */}
 		</>
 	);
 };

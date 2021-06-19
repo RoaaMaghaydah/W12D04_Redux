@@ -1,19 +1,25 @@
 const initialState = {
-    token:"",
-  };
+    token: "",
+};
 
 
-
-  const token = (state = initialState, { type, payload }) => {
+const login = (state = initialState, { type, payload }) => {
     switch (type) {
-      case 'SET_TODOS':
-        return { token : payload };
-  
-    }};
-    export default token;
+        case 'SET_TOKEN':
+            return { token:payload };
 
 
-  export const setToken = (token) => {
-    return { type: "SET_TOKEN" ,
-     payload : token }
-  };
+        default:
+            return state;
+    }
+
+};
+export default login;
+
+
+export const setToken = (token) => {
+    return {
+        type: "SET_TOKEN",
+        payload: token
+    }
+};

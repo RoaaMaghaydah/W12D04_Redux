@@ -1,110 +1,84 @@
-const articlesModel = require('./../../db/models/articles');
+const db = require('./../../db/db');
 
 const getAllArticles = (req, res) => {
-	articlesModel
-		.find({})
-		.then((result) => {
-			res.status(200).json(result);
-		})
-		.catch((err) => {
-			res.send(err);
-		});
+	const query = `SELECT * FROM articles WHERE is_deleted=0`;
+	db.query(query, (err, result) => {
+		if (err) throw err;
+		console.log('RESULT: ', result);
+		res.json(result)
+	});
 };
 
 const getArticlesByAuthor = (req, res) => {
-	const author = req.query.author;
-
-	if (!author) return res.status(404).json('not found');
-
-	articlesModel
-		.find({ author })
-		.then((result) => {
-			res.status(200).json(result);
-		})
-		.catch((err) => {
-			res.send(err);
-		});
+	const auth = req.query.author;
+	const query = `SELECT articles.title, articles.description,articles.id  FROM  articles
+	INNER JOIN  users ON users.id=author_id`;
+	db.query(query, (err, result) => {
+		const arr = []
+		if (err) throw err;
+		res.json(result)
+	});
 };
 
 const getAnArticleById = (req, res) => {
-	const _id = req.params.id;
+	const id = req.params.id;
+	const query = `SELECT users.firstName ,users.id ,articles.title, articles.description,articles.id FROM  articles
+	INNER JOIN  users ON articles.id=${id} AND users.id=author_id`;
+	db.query(query, (err, result) => {
+		const arr = []
+		if (err) throw err;
+		res.json(result)
+	});
 
-	if (!_id) return res.status(404).json('not found');
-
-	articlesModel
-		.findOne({ _id })
-		.populate('author', 'firstName -_id')
-		.exec()
-		.then((result) => {
-			res.status(200).json(result);
-		})
-		.catch((err) => {
-			res.send(err);
-		});
 };
 
 const createNewArticle = (req, res) => {
-	const { title, description, author } = req.body;
-
-	const article = new articlesModel({
-		title,
-		description,
-		author,
+	const { title, description, author_id } = req.body;
+	const query = `INSERT INTO articles (title, description,author_id ) VALUES (?,?,?)`;
+	const data = [title, description, author_id];
+	db.query(query, data, (err, results) => {
+		console.log(results);
+		res.json(results)
 	});
 
-	article
-		.save()
-		.then((result) => {
-			res.status(201).json(result);
-		})
-		.catch((err) => {
-			res.send(err);
-		});
 };
 
 const updateAnArticleById = (req, res) => {
 	const id = req.params.id;
-
-	articlesModel
-		.findByIdAndUpdate(id, req.body, { new: true })
-		.then((result) => {
-			res.status(200).json(result);
-		})
-		.catch((err) => {
-			res.send(err);
-		});
+	const { title, description } = req.body;
+	const query = `UPDATE articles
+    SET title=?, description = ?
+    WHERE id=${id}`;
+	const data = [title, description];
+	db.query(query, data, (err, results) => {
+		console.log(results);
+		res.json(results)
+	});
 };
+
+
 
 const deleteArticleById = (req, res) => {
 	const id = req.params.id;
-
-	articlesModel
-		.findByIdAndDelete(id)
-		.then((result) => {
-			res.status(200).json({
-				success: true,
-				message: `Success Delete atricle with id => ${id}`,
-			});
-		})
-		.catch((err) => {
-			res.send(err);
-		});
+	const query = `DELETE FROM articles WHERE id=${id}`;
+	db.query(query, (err, results) => {
+		console.log(results);
+		res.json(results)
+	});
 };
 
 const deleteArticlesByAuthor = (req, res) => {
-	const author = req.body.author;
+	const auth = req.query.author;
+	const query = `UPDATE articles
+   SET is_deteted=1
+   WHERE  id=?`;
+	const arr = [auth]
+	db.query(query, arr, (err, result) => {
+		if (err) throw err;
+		console.log("roaa", result)
+		res.json(result);
+	});
 
-	articlesModel
-		.deleteMany({ author })
-		.then((result) => {
-			res.status(200).json({
-				success: true,
-				message: `Success Delete atricle with id => ${author}`,
-			});
-		})
-		.catch((err) => {
-			res.send(err);
-		});
 };
 
 module.exports = {
