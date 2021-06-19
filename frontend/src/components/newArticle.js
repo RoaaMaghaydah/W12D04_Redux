@@ -17,11 +17,9 @@ const NewArticle = () => {
 	const newArticles = () => {
 		const newArt = { title, description };
 		axios.post(`http://localhost:5000/articles`, newArt)
-
 			.then((response) => {
-				console.log("resss  ",response.data)
-
-
+				dispatch(createArticles(response.data));
+				
 			})
 			.catch((err) => {
 
@@ -41,6 +39,8 @@ const NewArticle = () => {
 					setDescription(e.target.value);
 				}} />
 				<button className="newArticleButton" onClick={newArticles}>Create New Artical</button>
+
+			
 			</div>
 		</>
 	);

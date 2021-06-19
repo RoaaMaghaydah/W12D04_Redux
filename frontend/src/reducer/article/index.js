@@ -11,7 +11,6 @@ const initialState = {
       case 'ADD_ARTICLE':
         return { articles: [...state.articles, payload] };
      
-
       case 'UPDATE_ARTICLE':
         return {
             articles: state.articles.map((elem, i) => {

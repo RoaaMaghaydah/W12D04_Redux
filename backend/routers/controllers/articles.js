@@ -37,8 +37,8 @@ const createNewArticle = (req, res) => {
 	const query = `INSERT INTO articles (title, description,author_id ) VALUES (?,?,?)`;
 	const data = [title, description, author_id];
 	db.query(query, data, (err, results) => {
-    const query1 = `SELECT * FROM articles WHERE title=? AND description=? AND author_id=?`;
-	const data1 = [title, description,author_id];
+    const query1 = `SELECT * FROM articles WHERE title=? AND description=?`;
+	const data1 = [title, description];
 	console.log("title",title)
 	db.query(query1,data1,(err, results) => {
 	res.json(results)
